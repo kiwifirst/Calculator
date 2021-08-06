@@ -11,7 +11,7 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
-    if (b === 0) return 'ERROR, divide 0'
+    // if (b === 0) return 'ERROR, divide 0'
     return a / b;
 }
 
@@ -33,7 +33,6 @@ function operate(operator, a, b) {
     }
 }
 
-let displayString = '';
 let numberArray = [];
 let storedArray = [];
 let storedOperator = '';
@@ -41,6 +40,7 @@ let storedOperator = '';
 const numberButtons = document.querySelectorAll('.number-btn');
 const operatorButtons = document.querySelectorAll('.operator-btn');
 const equalButton = document.querySelector('#equal-btn');
+const dotButton = document.querySelector('#dot-btn');
 const clearButton = document.querySelector('#AC-btn');
 const delButton = document.querySelector('#DEL-btn');
 const mainDisplay = document.querySelector('.main-display');
@@ -50,12 +50,18 @@ const topDisplay = document.querySelector('.top-display');
 numberButtons.forEach(numberButton => numberButton.addEventListener('click', updateNumber));
 operatorButtons.forEach(operatorButton => operatorButton.addEventListener('click', updateOperator));
 equalButton.addEventListener('click', updateEqual);
+dotButton.addEventListener('click', updateDot);
 clearButton.addEventListener('click', clearData);
 delButton.addEventListener('click', deleteNumber);
 
 function updateNumber(e) {
-    if (displayString.length > 12) return 'Maximum display reached';
+    // if (displayString.length > 12) return 'Maximum display reached';
     numberArray.push(e.target.textContent);
+    updateDisplay();
+}
+
+function updateDot(e) {
+    if (!numberArray.includes('.')) numberArray.push('.');
     updateDisplay();
 }
 
@@ -63,23 +69,36 @@ function updateOperator(e) {
     if (storedOperator === '') {
         storedOperator = e.target.textContent;
         storedArray = numberArray;
-        numberArray = [];
-        updateDisplay();
+    }
+    else if (numberArray.length === 0) {
+        storedOperator = e.target.textContent;
+    }
+    else if (storedOperator === '÷' && numberArray.length === 1 && numberArray[0] == 0) {
+        alert('Dividing by Zero is undefined.')
     }
     else {
         const result = round(operate(storedOperator, +storedArray.join(''), +numberArray.join('')), 8);
         storedOperator = e.target.textContent;
         storedArray = result.toString().split('');
-        numberArray = [];
-        updateDisplay();
     }
+    numberArray = [];
+    updateDisplay();
 }
 
 function updateEqual(e) {
-    const result = round(operate(storedOperator, +storedArray.join(''), +numberArray.join('')), 8);
-    storedOperator = '';
-    storedArray = [];
-    numberArray = result.toString().split('');
+
+    if (storedOperator === '' || storedArray.length === 0 || numberArray.length === 0) return;
+
+    if (storedOperator === '÷' && numberArray.length === 1 && numberArray[0] == 0) {
+        alert('Dividing by Zero is undefined.')
+        numberArray = [];
+    }
+    else {
+        const result = round(operate(storedOperator, +storedArray.join(''), +numberArray.join('')), 8);
+        storedOperator = '';
+        storedArray = [];
+        numberArray = result.toString().split('');
+    }
     updateDisplay();
 }
 
