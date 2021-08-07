@@ -11,7 +11,6 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
-    // if (b === 0) return 'ERROR, divide 0'
     return a / b;
 }
 
@@ -46,22 +45,16 @@ const delButton = document.querySelector('#DEL-btn');
 const mainDisplay = document.querySelector('.main-display');
 const topDisplay = document.querySelector('.top-display');
 
-
 numberButtons.forEach(numberButton => numberButton.addEventListener('click', updateNumber));
 operatorButtons.forEach(operatorButton => operatorButton.addEventListener('click', updateOperator));
 equalButton.addEventListener('click', updateEqual);
-dotButton.addEventListener('click', updateDot);
+dotButton.addEventListener('click', updateNumber);
 clearButton.addEventListener('click', clearData);
 delButton.addEventListener('click', deleteNumber);
 
 function updateNumber(e) {
-    // if (displayString.length > 12) return 'Maximum display reached';
+    if (e.target.textContent === '.' && numberArray.includes('.')) return;
     numberArray.push(e.target.textContent);
-    updateDisplay();
-}
-
-function updateDot(e) {
-    if (!numberArray.includes('.')) numberArray.push('.');
     updateDisplay();
 }
 
@@ -74,7 +67,7 @@ function updateOperator(e) {
         storedOperator = e.target.textContent;
     }
     else if (storedOperator === '÷' && numberArray.length === 1 && numberArray[0] == 0) {
-        alert('Dividing by Zero is undefined.')
+        alert('Dividing by Zero is undefined.');
     }
     else {
         const result = round(operate(storedOperator, +storedArray.join(''), +numberArray.join('')), 8);
@@ -117,7 +110,5 @@ function deleteNumber(e) {
 
 function updateDisplay() {
     topDisplay.textContent = storedArray.join('') + ' ' + storedOperator;
-
-    // mainDisplay.textContent = (numberArray.length !== 0 ) ? numberArray.join('') : '0';
     mainDisplay.textContent = numberArray.join('');
 }
